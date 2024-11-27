@@ -5,9 +5,10 @@ export const validateBody = (req, res, next) => {
     "price",
     "stock",
     "status",
+    "code",
     "category",
   ];
-  const allowedFields = [...requiredFields];
+  const allowedFields = [...requiredFields, "thumbnail"];
   const errors = [];
 
   requiredFields.forEach((field) => {
@@ -15,6 +16,17 @@ export const validateBody = (req, res, next) => {
       errors.push(`El campo ${field} es obligatorio`);
     }
   });
+
+  if (isNaN(req.body.price)) {
+    errors.push("El precio debe ser un número");
+  } else if (req.body.price < 0) {
+    errors.push("El precio debe ser mayor a 0");
+  }
+
+  if (isNaN(req.body.stock)) {
+    errors.push("El stock debe ser un número");
+  }
+
   const extraFields = Object.keys(req.body).filter(
     (field) => !allowedFields.includes(field)
   );

@@ -1,10 +1,10 @@
 {
   "name": "primera-entrega",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js --ignore src/json/*"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js --ignore src/json/*"
   },
   "keywords": [],
   "author": "",
@@ -12,7 +12,9 @@
   "description": "",
   "type": "module",
   "dependencies": {
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "express-handlebars": "^8.0.1",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"

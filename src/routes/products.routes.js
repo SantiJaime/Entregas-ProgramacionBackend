@@ -21,8 +21,33 @@ router.get("/", (req, res) => {
   }
   const { limit } = req.query;
   const productsLimit = limit ? products.slice(0, parseInt(limit)) : products;
-  
-  res.status(200).send({ msg: "Productos encontrados", products: productsLimit });
+
+  res.render("home", { title: "Productos", products: productsLimit });
+});
+
+router.get("/no-render", (req, res) => {
+  if (products.length === 0) {
+    return res.status(404).send({ msg: "Productos no encontrados" });
+  }
+  const { limit } = req.query;
+  const productsLimit = limit ? products.slice(0, parseInt(limit)) : products;
+
+  res
+    .status(200)
+    .send({ msg: "Productos encontrados", products: productsLimit });
+});
+
+router.get("/realtimeproducts", (req, res) => {
+  if (products.length === 0) {
+    return res.status(404).send({ msg: "Productos no encontrados" });
+  }
+  const { limit } = req.query;
+  const productsLimit = limit ? products.slice(0, parseInt(limit)) : products;
+
+  res.render("realTimeProducts", {
+    title: "Productos en tiempo real",
+    products: productsLimit,
+  });
 });
 
 router.get("/:pid", validateParams, (req, res) => {
@@ -42,6 +67,8 @@ router.post("/", validateBody, async (req, res) => {
     products.push(newProduct);
 
     await fs.writeFile("./src/json/products.json", JSON.stringify(products));
+
+    req.io.emit("productCreated", newProduct);
 
     res.status(201).send({ msg: "Producto creado correctamente", newProduct });
   } catch (error) {
@@ -91,7 +118,7 @@ router.delete("/:pid", validateParams, async (req, res) => {
       "./src/json/products.json",
       JSON.stringify(filteredProducts)
     );
-
+    req.io.emit("deleteProduct", filteredProducts);
     res.status(200).send({ msg: "Producto eliminado correctamente" });
   } catch (error) {
     console.error(error);
