@@ -24,6 +24,10 @@ body {
   background-color: #333435;
   box-shadow: 0 4px 6px rgba(219, 219, 219, 0.1);
   color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px 10px;
 }
 
 .card-img {
@@ -49,7 +53,9 @@ body {
 }
 
 .btn,
-.btn-red {
+.btn-red,
+.btn-disabled,
+.btn-selected {
   display: inline-block;
   padding: 0.5rem 1rem;
   font-size: 1rem;
@@ -61,6 +67,17 @@ body {
   border-radius: 0.25rem;
   cursor: pointer;
 }
+
+.btn-disabled {
+  cursor: not-allowed;
+  background-color: gray;
+}
+
+.btn-selected {
+  background-color: green;
+  cursor: not-allowed;
+}
+
 .btn-red {
   background-color: rgb(252, 48, 48);
 }
@@ -77,12 +94,17 @@ body {
   transition: all 0.09s ease-in-out;
 }
 
-.divButtons{
+.divButtons {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  margin-top: 20px;
+}
+
+.cart-container{
+  padding: 30px;
 }
 
 .navbar {
@@ -96,6 +118,13 @@ body {
 .navbar-links {
   display: flex;
   gap: 1rem;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 20px;
 }
 
 .navbar-links a {
@@ -127,6 +156,10 @@ h2 {
 .form-container {
   display: flex;
   justify-content: center;
+}
+
+a {
+  text-decoration: none;
 }
 
 .form-container form {
@@ -164,8 +197,11 @@ select {
   width: 300px;
 }
 
-li {
-  list-style: none;
+.clearQueriesButton{
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 20px;
 }
 
 @media (max-width: 768px) {

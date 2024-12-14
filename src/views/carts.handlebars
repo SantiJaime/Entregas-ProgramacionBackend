@@ -1,0 +1,30 @@
+<div class="clearQueriesButton">
+  <button class="btn" type="button" onclick="createNewCart()">Crear nuevo
+    carrito</button>
+</div>
+<div class="products-grid" id="carts-grid">
+  {{#if allCarts.length}}
+    {{#each allCarts}}
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Carrito {{this._id}}</h5>
+          <hr />
+          <div class="divButtons">
+            <a href="/api/carts/{{this._id}}" class="btn">Ver productos de este
+              carrito</a>
+            <button
+              class="btn-red"
+              onclick="emptyCart({{json this._id}})"
+            >Vaciar carrito</button>
+
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  {{else}}
+    <h2>No hay carritos creados</h2>
+  {{/if}}
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/carts.js"></script>

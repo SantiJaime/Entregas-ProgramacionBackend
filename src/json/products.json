@@ -1,1 +1,103 @@
-[{"id":1,"title":"Auriculares Bose QuietComfort 45","description":"Auriculares inalámbricos con cancelación de ruido, diseño ergonómico y batería de 30 horas.","code":"BOSEQC45","price":329.99,"status":true,"stock":120,"category":"Electrónica","thumbnail":"https://assets.bose.com/content/dam/cloudassets/Bose_DAM/Web/consumer_electronics/global/products/headphones/qc45/product_silo_images/QC45_PDP_Ecom-Gallery-B04.jpg/jcr:content/renditions/cq5dam.web.1920.1920.jpeg"},{"id":2,"title":"Samsung Galaxy S21","description":"Smartphone con pantalla AMOLED de 6.7 pulgadas, 128GB de almacenamiento y cámara de 64MP.","code":"SGS21","price":799.99,"status":true,"stock":50,"category":"Electrónica","thumbnail":"https://riiing.com.ar/wp-content/uploads/2023/06/Samsung-S21-FE-1.png"},{"id":3,"title":"MacBook Air M2","description":"Laptop ligera y potente, ideal para estudiantes y profesionales, con procesador Intel Core i5.","code":"MBAIRM2","price":1199.99,"status":true,"stock":80,"category":"Computadoras","thumbnail":"https://http2.mlstatic.com/D_NQ_NP_613040-MLA51356222696_082022-O.webp"},{"id":4,"title":"Apple Watch Series 8","description":"Reloj inteligente con monitorización de salud, GPS y 7 días de duración de batería.","code":"AW8","price":399.99,"status":true,"stock":200,"category":"Accesorios","thumbnail":"https://ar.oneclickstore.com/wp-content/uploads/2023/06/Apple_Watch_Series_8_GPS_45mm_Midnight_Aluminum_Midnight_Sport_Band_PDP_Image_Position-1_MXLA-1-scaled.jpg"},{"id":5,"title":"Canon EOS Rebel T7","description":"Cámara fotográfica DSLR con lente de 18-55mm, ideal para principiantes.","code":"CANT7","price":499.99,"status":true,"stock":30,"category":"Fotografía","thumbnail":"https://m.media-amazon.com/images/I/71Is-Zv6A0L._AC_SL1500_.jpg"}]
+[
+    {
+      "title": "Sony WH-1000XM5",
+      "description": "Auriculares inalámbricos con cancelación de ruido, sonido de alta resolución y 30 horas de batería.",
+      "code": "SONYXM5",
+      "price": 399.99,
+      "status": true,
+      "stock": 60,
+      "category": "Electrónica",
+      "thumbnail": "https://www.sony.com/image/sony-wh-1000xm5-header.jpg"
+    },
+    {
+      "title": "Samsung QLED 4K 55\"",
+      "description": "Televisor inteligente con tecnología QLED, resolución 4K y sistema operativo Tizen.",
+      "code": "SAMSUNGQLED55",
+      "price": 899.99,
+      "status": true,
+      "stock": 40,
+      "category": "Electrónica",
+      "thumbnail": "https://www.samsung.com/latin_en/televisions/qled-55-inches.jpg"
+    },
+    {
+      "title": "Dell XPS 13",
+      "description": "Laptop ultradelgada con pantalla InfinityEdge de 13 pulgadas, procesador Intel Core i7 y 512GB de SSD.",
+      "code": "DELLXPS13",
+      "price": 1399.99,
+      "status": true,
+      "stock": 25,
+      "category": "Computadoras",
+      "thumbnail": "https://www.dell.com/sites/csimages/Video_Imagery/all/xps-13-laptop.png"
+    },
+    {
+      "title": "Garmin Fenix 7",
+      "description": "Reloj deportivo GPS con sensor de frecuencia cardíaca, duración de batería de hasta 18 días.",
+      "code": "GARMINF7",
+      "price": 649.99,
+      "status": true,
+      "stock": 150,
+      "category": "Accesorios",
+      "thumbnail": "https://www.garmin.com/media/fenix-7.jpg"
+    },
+    {
+      "title": "Nikon D3500",
+      "description": "Cámara réflex digital con lente de 18-55mm, ideal para fotógrafos novatos.",
+      "code": "NIKOND3500",
+      "price": 449.99,
+      "status": true,
+      "stock": 70,
+      "category": "Fotografía",
+      "thumbnail": "https://www.nikonusa.com/en/Nikon-Products/cameras/dslr-cameras/d3500-body/images/d3500-gallery-1.jpg"
+    },
+    {
+        "title": "Apple iPad Pro 12.9\"",
+        "description": "Tableta con pantalla Liquid Retina XDR, chip M1, y hasta 1TB de almacenamiento.",
+        "code": "IPADPRO129",
+        "price": 1099.99,
+        "status": true,
+        "stock": 100,
+        "category": "Electrónica",
+        "thumbnail": "https://www.apple.com/v/ipad-pro/l/images/overview/hero__bmzvpk9kdjqi_large_2x.jpg"
+      },
+      {
+        "title": "Microsoft Surface Laptop 4",
+        "description": "Laptop con pantalla táctil de 13.5 pulgadas, procesador Intel Core i7, 16GB de RAM y 512GB SSD.",
+        "code": "SURFACELAPTOP4",
+        "price": 1499.99,
+        "status": true,
+        "stock": 35,
+        "category": "Computadoras",
+        "thumbnail": "https://www.microsoft.com/surface-laptop-4.jpg"
+      },
+      {
+        "title": "Bose SoundLink Revolve+",
+        "description": "Altavoz Bluetooth portátil con sonido 360 grados, resistente al agua y 16 horas de batería.",
+        "code": "BOSESLRPLUS",
+        "price": 299.99,
+        "status": true,
+        "stock": 75,
+        "category": "Electrónica",
+        "thumbnail": "https://assets.bose.com/content/dam/bose/consumer_web_images/soundlink_revolve_plus_hero.jpg"
+      },
+      {
+        "title": "Fitbit Charge 5",
+        "description": "Pulsera de actividad con monitor de frecuencia cardíaca, GPS integrado y 7 días de duración de batería.",
+        "code": "FITBITC5",
+        "price": 149.99,
+        "status": true,
+        "stock": 120,
+        "category": "Accesorios",
+        "thumbnail": "https://www.fitbit.com/global_assets/pdp/charge5.jpg"
+      },
+      {
+        "title": "GoPro HERO11 Black",
+        "description": "Cámara de acción 5.3K con estabilización HyperSmooth 5.0, resistente al agua hasta 10 metros.",
+        "code": "GOPROHERO11",
+        "price": 499.99,
+        "status": true,
+        "stock": 50,
+        "category": "Fotografía",
+        "thumbnail": "https://gopro.com/content/dam/gopro/pdp/heroelevated-hero11.jpg"
+      }
+  ]
+  

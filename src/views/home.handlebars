@@ -1,5 +1,8 @@
+<div class="clearQueriesButton">
+  <a href="/api/products" class="btn">Limpiar queries</a>
+</div>
 <div class="products-grid">
-  {{#each products}}
+  {{#each docs}}
     <div class="card">
       <img src={{this.thumbnail}} class="card-img" />
       <div class="card-body">
@@ -7,8 +10,21 @@
         <h6 class="card-title">${{this.price}}</h6>
         <hr />
         <p class="card-text">{{this.description}}</p>
-        <button class="btn" type="button">Agregar al carrito</button>
       </div>
     </div>
   {{/each}}
+</div>
+<div class="pagination">
+  {{#if hasPrevPage}}
+    <a href="{{prevLink}}" class="btn">Atrás</a>
+  {{else}}
+    <button class="btn-disabled" disabled>Atrás</button>
+  {{/if}}
+
+  <button class="btn">{{page}}</button>
+  {{#if hasNextPage}}
+    <a class="btn" href="{{nextLink}}">Siguiente</a>
+  {{else}}
+    <button class="btn-disabled" disabled>Siguiente</button>
+  {{/if}}
 </div>

@@ -4,125 +4,187 @@ import {
   validateParams,
 } from "../middleware/products-middleware.js";
 import fs from "fs/promises";
+import { Product } from "../models/products.model.js";
 
 const router = Router();
 
-let products = [];
+router.get("/", async (req, res) => {
+  try {
+    const {
+      limit = 10,
+      page = 1,
+      query = "",
+      value = "",
+      sort = "asc",
+    } = req.query;
 
-fs.readFile("./src/json/products.json", "utf-8")
-  .then((data) => {
-    products = JSON.parse(data);
-  })
-  .catch((err) => console.error(err));
+    const options = {
+      page: Number(page),
+      limit: Number(limit),
+      sort: { title: sort === "desc" ? -1 : 1 },
+      lean: true,
+    };
+    const filter =
+      query && value ? { [query]: { $regex: value, $options: "i" } } : {};
 
-router.get("/", (req, res) => {
-  if (products.length === 0) {
-    return res.status(404).send({ msg: "Productos no encontrados" });
+    const result = await Product.paginate(filter, options);
+    const { totalDocs, pagingCounter, ...restResult } = result;
+
+    if (restResult.docs.length === 0) {
+      return res.status(404).json({ msg: "Productos no encontrados" });
+    }
+
+    res.render("home", {
+      ...restResult,
+      status: "success",
+      prevLink: restResult.hasPrevPage
+        ? `/api/products?limit=${limit}&page=${restResult.prevPage}`
+        : null,
+      nextLink: restResult.hasNextPage
+        ? `/api/products?limit=${limit}&page=${restResult.nextPage}`
+        : null,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ msg: "Error al obtener los productos", error: error.message });
   }
-  const { limit } = req.query;
-  const productsLimit = limit ? products.slice(0, parseInt(limit)) : products;
-
-  res.render("home", { title: "Productos", products: productsLimit });
 });
 
-router.get("/no-render", (req, res) => {
-  if (products.length === 0) {
-    return res.status(404).send({ msg: "Productos no encontrados" });
-  }
-  const { limit } = req.query;
-  const productsLimit = limit ? products.slice(0, parseInt(limit)) : products;
+router.get("/no-render", async (req, res) => {
+  try {
+    const {
+      limit = 10,
+      page = 1,
+      query = "",
+      value = "",
+      sort = "asc",
+    } = req.query;
 
-  res
-    .status(200)
-    .send({ msg: "Productos encontrados", products: productsLimit });
+    const options = {
+      page: Number(page),
+      limit: Number(limit),
+      sort: { title: sort === "desc" ? -1 : 1 },
+      lean: true,
+    };
+    const filter =
+      query && value ? { [query]: { $regex: value, $options: "i" } } : {};
+
+    const result = await Product.paginate(filter, options);
+    const { totalDocs, pagingCounter, ...restResult } = result;
+
+    if (restResult.docs.length === 0) {
+      return res.status(404).json({ msg: "Productos no encontrados" });
+    }
+
+    res.status(200).json({
+      ...restResult,
+      status: "success",
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ msg: "Error al obtener los productos", error: error.message });
+  }
 });
 
-router.get("/realtimeproducts", (req, res) => {
-  if (products.length === 0) {
-    return res.status(404).send({ msg: "Productos no encontrados" });
+router.get("/realtimeproducts", async (req, res) => {
+  try {
+    const {
+      limit = 10,
+      page = 1,
+      query = "",
+      value = "",
+      sort = "asc",
+    } = req.query;
+
+    const options = {
+      page: Number(page),
+      limit: Number(limit),
+      sort: { title: sort === "desc" ? -1 : 1 },
+      lean: true,
+    };
+    const filter =
+      query && value ? { [query]: { $regex: value, $options: "i" } } : {};
+
+    const result = await Product.paginate(filter, options);
+    const { totalDocs, pagingCounter, ...restResult } = result;
+
+    if (restResult.docs.length === 0) {
+      return res.status(404).json({ msg: "Productos no encontrados" });
+    }
+
+    res.render("realTimeProducts", {
+      ...restResult,
+      status: "success",
+      prevLink: restResult.hasPrevPage
+        ? `/api/products/realtimeproducts?limit=${limit}&page=${restResult.prevPage}`
+        : null,
+      nextLink: restResult.hasNextPage
+        ? `/api/products/realtimeproducts?limit=${limit}&page=${restResult.nextPage}`
+        : null,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ msg: "Error al obtener los productos", error: error.message });
   }
-  const { limit } = req.query;
-  const productsLimit = limit ? products.slice(0, parseInt(limit)) : products;
-
-  res.render("realTimeProducts", {
-    title: "Productos en tiempo real",
-    products: productsLimit,
-  });
-});
-
-router.get("/:pid", validateParams, (req, res) => {
-  const prod = products.find(
-    (product) => product.id === parseInt(req.params.pid)
-  );
-  if (!prod) return res.status(404).send({ msg: "Producto no encontrado" });
-
-  res.status(200).send({ msg: "Producto encontrado", prod });
 });
 
 router.post("/", validateBody, async (req, res) => {
   try {
-    const id = products.length + 1;
-    const newProduct = { id, ...req.body };
-
-    products.push(newProduct);
-
-    await fs.writeFile("./src/json/products.json", JSON.stringify(products));
+    const newProduct = new Product(req.body);
+    await newProduct.save();
 
     req.io.emit("productCreated", newProduct);
 
-    res.status(201).send({ msg: "Producto creado correctamente", newProduct });
+    res.status(201).json({ msg: "Producto creado correctamente", newProduct });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ msg: "Error al crear el producto", error });
+    res
+      .status(500)
+      .json({ msg: "Error al crear el producto", error: error.message });
   }
 });
 
 router.put("/:pid", validateParams, validateBody, async (req, res) => {
   try {
-    const prodIndex = products.findIndex(
-      (product) => product.id === parseInt(req.params.pid)
+    const updatedProduct = await Product.findByIdAndUpdate(
+      { _id: req.params.pid },
+      req.body,
+      { new: true }
     );
 
-    if (prodIndex === -1) {
-      return res.status(404).send({
-        msg: `El producto con ID ${req.params.pid} no existe`,
-      });
+    if (!updatedProduct) {
+      return res.status(404).json({ msg: "Producto no encontrado" });
     }
-    products[prodIndex] = { ...products[prodIndex], ...req.body };
 
-    await fs.writeFile("./src/json/products.json", JSON.stringify(products));
-    res.status(200).send({
-      msg: "Producto actualizado correctamente",
-      product: products[prodIndex],
-    });
+    res
+      .status(200)
+      .json({ msg: "Producto actualizado correctamente", updatedProduct });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ msg: "Error al actualizar el producto", error });
+    res
+      .status(500)
+      .json({ msg: "Error al actualizar el producto", error: error.message });
   }
 });
 
 router.delete("/:pid", validateParams, async (req, res) => {
   try {
-    const filteredProducts = products.filter(
-      (product) => product.id !== parseInt(req.params.pid)
-    );
+    const deletedProduct = await Product.findByIdAndDelete({
+      _id: req.params.pid,
+    });
 
-    if (filteredProducts.length === products.length) {
-      return res.status(404).send({
-        msg: `El producto con ID ${req.params.pid} no existe`,
-      });
+    if (!deletedProduct) {
+      return res.status(404).json({ msg: "Producto no encontrado" });
     }
-    products = [...filteredProducts];
 
-    await fs.writeFile(
-      "./src/json/products.json",
-      JSON.stringify(filteredProducts)
-    );
-    req.io.emit("deleteProduct", filteredProducts);
-    res.status(200).send({ msg: "Producto eliminado correctamente" });
+    req.io.emit("deleteProduct");
+
+    res.status(200).json({ msg: "Producto eliminado correctamente" });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ msg: "Error al eliminar el producto", error });
+    res
+      .status(500)
+      .json({ msg: "Error al eliminar el producto", error: error.message });
   }
 });
 

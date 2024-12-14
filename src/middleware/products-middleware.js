@@ -45,8 +45,6 @@ export const validateBody = (req, res, next) => {
 export const validateParams = (req, res, next) => {
   if (!req.params.pid) {
     return res.status(422).send({ msg: "El parámetro ID es obligatorio" });
-  } else if (isNaN(req.params.pid)) {
-    return res.status(422).send({ msg: "El parámetro ID debe ser un número" });
   }
   next();
 };
