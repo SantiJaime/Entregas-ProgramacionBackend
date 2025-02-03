@@ -1,10 +1,10 @@
 {
   "name": "primera-entrega",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js --ignore src/json/*"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js --ignore src/json/*"
   },
   "keywords": [],
   "author": "",
@@ -12,10 +12,18 @@
   "description": "",
   "type": "module",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "connect-mongo": "^5.1.0",
+    "cookie-parser": "^1.4.7",
     "express": "^4.21.1",
     "express-handlebars": "^8.0.1",
+    "express-session": "^1.18.1",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.4",
     "mongoose-pagination-v2": "^0.0.4",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "passport-local": "^1.0.0",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
