@@ -1,4 +1,5 @@
 import express from "express";
+import "dotenv/config";
 import productsRouter from "./routes/products.routes.js";
 import cartsRouter from "./routes/carts.routes.js";
 import indexRouter from "./routes/index.routes.js";
@@ -10,9 +11,10 @@ import { Server } from "socket.io";
 import { connectDB } from "./database/db-connection.js";
 import { initializePassport } from "./config/passport.config.js";
 import passport from "passport";
-import session from 'express-session'
-import MongoStore from 'connect-mongo'
-import cookieParser from "cookie-parser"
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import cookieParser from "cookie-parser";
+import { config } from "./config/env.js";
 
 const app = express();
 
@@ -33,24 +35,40 @@ io.on("connection", (socket) => {
   });
 });
 
-app.engine("handlebars", engine({
-  helpers: {
-    json: (context) => JSON.stringify(context)
-  },
-}));
+app.engine(
+  "handlebars",
+  engine({
+    helpers: {
+      json: (context) => JSON.stringify(context),
+      ifEqual: (a, b, options) => {
+        if (a === b) {
+          return options.fn(this);
+        } else {
+          return options.inverse(this);
+        }
+      },
+    },
+  })
+);
 app.set("view engine", "handlebars");
 
-app.use(cookieParser("SantiagoJaimeCookieSecret"));
-app.use(session({
-  store: MongoStore.create({
-      mongoUrl: "mongodb+srv://santij03:6zxoy7ehrRwJ7ncu@cluster0.1weaa.mongodb.net/",
+app.use(cookieParser(config.COOKIE_SECRET));
+app.use(
+  session({
+    store: MongoStore.create({
+      mongoUrl: config.MONGO_URL,
       mongoOptions: {},
-      ttl: 15
-  }),
-  secret: 'SantiagoJaimeSessionSecret',
-  resave: true,
-  saveUninitialized: true
-}))
+      ttl: 60 * 60,
+    }),
+    secret: config.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+      secure: false,
+      httpOnly: true,
+    },
+  })
+);
 
 app.set("views", path.join(__dirname, "views"));
 app.use(passport.initialize());
@@ -58,6 +76,7 @@ app.use(passport.session());
 initializePassport();
 
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use("/", indexRouter);

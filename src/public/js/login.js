@@ -15,31 +15,29 @@ const login = async () => {
       credentials: "include",
       body: JSON.stringify(user),
     });
-    if (!response.ok) {
-      console.log(response.status, response.statusText);
-    }
 
     const data = await response.json();
 
     if (data.redirect) {
       Swal.fire({
         icon: "success",
-        title: data.msg,
+        title: "Sesión iniciada correctamente",
         text: "Redirigiendo...",
         toast: true,
         position: "top-end",
         showConfirmButton: false,
         timer: 2000,
       });
-      sessionStorage.setItem("logged", JSON.stringify(true));
+      sessionStorage.setItem("cartId", JSON.stringify(data.cartId));
       setTimeout(() => {
         location.href = data.redirect;
       }, 2000);
     }
   } catch (error) {
+    console.log(error)
     Swal.fire({
       icon: "error",
-      title: "Error al registrar usuario",
+      title: "Error al iniciar sesión",
       text: error.message,
       toast: true,
       position: "top-end",

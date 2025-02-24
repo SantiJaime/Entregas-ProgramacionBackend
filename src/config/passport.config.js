@@ -4,6 +4,7 @@ import { UserModel } from "../models/users.model.js";
 import { hashPassword, validatePassword } from "../utils/bcrypt.js";
 import { Cart } from "../models/carts.model.js";
 import jwt from "passport-jwt";
+import { config } from "./env.js";
 
 const localStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy;
@@ -12,7 +13,7 @@ const ExtractJWT = jwt.ExtractJwt;
 const cookieExtractor = (req) => {
   let token = null;
   if (req && req.cookies) {
-    token = req.cookies["SantiagoJaimeCookieSecret"];
+    token = req.cookies[config.COOKIE_SECRET];
   }
 
   return token;
@@ -24,7 +25,7 @@ export const initializePassport = () => {
     new localStrategy(
       { passReqToCallback: true, usernameField: "email" },
       async (req, username, password, done) => {
-        const { first_name, last_name, email, age } = req.body;
+        const { first_name, last_name, email, age, role } = req.body;
         try {
           const user = await UserModel.findOne({ email: username });
 
@@ -35,16 +36,21 @@ export const initializePassport = () => {
             return done(null, false);
           }
 
-          const newCart = await Cart.create({ products: [] });
+          const newCart =
+            role !== "admin" ? await new Cart() : "";
 
           const newUser = await UserModel.create({
             first_name,
             last_name,
             email,
             age,
+            role,
             password: hashPassword(password),
             cart: newCart._id,
           });
+
+          newCart.userId = newUser._id;
+          await newCart.save();
 
           return done(null, newUser);
         } catch (error) {
@@ -64,7 +70,7 @@ export const initializePassport = () => {
           if (user && validatePassword(password, user.password)) {
             return done(null, user);
           } else {
-            return done(null, false);
+            return done(new Error("Usuario y/o contraseña no válidos"), false);
           }
         } catch (error) {
           return done(`Error al iniciar sesión: ${error}`, false);
@@ -78,7 +84,7 @@ export const initializePassport = () => {
     new JWTStrategy(
       {
         jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-        secretOrKey: "SantiagoJaimeJWTSecret",
+        secretOrKey: config.JWT_SECRET,
       },
       async (jwt_payload, done) => {
         try {

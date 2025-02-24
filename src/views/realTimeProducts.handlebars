@@ -1,77 +1,37 @@
 <div class="clearQueriesButton">
   <a href="/api/products/realtimeproducts" class="btn">Limpiar queries</a>
 </div>
-<div class="form-container">
-  <form id="createProductForm">
-    <h3>Crea un nuevo producto</h3>
-    <div class="form-group">
-      <label for="product-title">Título</label>
-      <input type="text" id="product-title" name="title" />
-    </div>
-    <div class="form-group">
-      <label for="product-description">Descripción</label>
-      <textarea rows="4" id="product-description" name="description"></textarea>
-    </div>
-    <div class="form-group">
-      <label for="product-price">Precio</label>
-      <input type="number" id="product-price" name="price" />
-    </div>
-    <div class="form-group">
-      <label for="product-stock">Stock</label>
-      <input type="number" id="product-stock" name="stock" />
-    </div>
-    <div class="form-group">
-      <label for="product-code">Código alfanumérico</label>
-      <input type="text" id="product-code" name="code" />
-    </div>
-    <div class="form-group">
-      <label for="product-thumbnail">URL de imagen</label>
-      <input type="text" id="product-thumbnail" name="code" />
-    </div>
-    <div class="form-group">
-      <label for="product-category">Categoría</label>
-      <select id="product-category" name="category">
-        <option value="">Sin seleccionar categoría</option>
-        <option value="Relojes inteligentes">Relojes inteligentes</option>
-        <option value="Notebooks">Notebooks</option>
-        <option value="Celulares">Celulares</option>
-        <option value="Auriculares">Auriculares</option>
-        <option value="Cámaras">Cámaras</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="product-status">Estado</label>
-      <select id="product-status" name="status">
-        <option value="">Sin seleccionar estado</option>
-        <option value="true">Verdadero</option>
-        <option value="false">Falso</option>
-      </select>
-    </div>
-    <div>
-      <button type="submit" class="btn">Crear producto</button>
-    </div>
-  </form>
-</div>
 <div class="products-grid" id="productsGrid">
-  {{#each docs}}
+{{#each docs}}
+  {{!-- Almacena el contexto actual en una variable --}}
+  {{#with this as |product|}}
     <div class="card">
-      <img src={{this.thumbnail}} class="card-img" />
+      <img src={{product.thumbnail}} class="card-img" />
       <div class="card-body">
-        <h5 class="card-title">{{this.title}}</h5>
-        <h6 class="card-title">${{this.price}}</h6>
+        <h5 class="card-title">{{product.title}}</h5>
+        <h6 class="card-title">${{product.price}}</h6>
         <hr />
-        <p class="card-text">{{this.description}}</p>
+        <p class="card-text">{{product.description}}</p>
         <div class="divButtons">
-          <button class="btn" type="button" onclick="addProductToCart({{json this._id}})">Agregar al carrito</button>
+          {{#ifEqual @root.userRole "user"}}
           <button
-            class="btn-red"
+            class="btn"
             type="button"
-            onclick="deleteProduct({{json this._id}})"
-          >Eliminar producto</button>
+            onclick="addProductToCart({{json product._id}})"
+          >Agregar al carrito</button>
+          {{/ifEqual}}
+          {{#ifEqual @root.userRole "admin"}}
+            <button
+              class="btn-red"
+              type="button"
+              onclick="deleteProduct({{json product._id}})"
+            >Eliminar producto</button>
+          {{/ifEqual}}
         </div>
       </div>
     </div>
-  {{/each}}
+  {{/with}}
+{{/each}}
 </div>
 <div class="pagination">
   {{#if hasPrevPage}}

@@ -1,15 +1,21 @@
-<div class="cart-container">
+<div class="cart-container" id="cart-container">
+  <div style="display: flex; justify-content: space-between; align-items: center">
   <h1>Carrito {{cart._id}}</h1>
+  <div>
+  <button class="btn" onclick="checkout({{json cart._id}})">Finalizar compra</button>
+  <button class="btn-red" onclick="emptyCart({{json cart._id}})">Vaciar carrito</button>
+  </div>
+  </div>
   <hr />
   <h2>Productos del carrito</h2>
     {{#if cart.products.length}}
-  <ul>
+  <ul id="cartProducts-list">
       {{#each cart.products}}
         <li style="color: white">
           {{this.productId.title}}
           - Cantidad:
           {{this.quantity}}
-          - Precio: ${{this.productId.price}}
+          - Precio unitario: ${{this.productId.price}}
         </li>
       {{/each}}
   </ul>
@@ -17,3 +23,6 @@
       <h3>No hay productos en el carrito</h3>
     {{/if}}
 </div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/oneCartView.js"></script>

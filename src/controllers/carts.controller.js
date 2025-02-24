@@ -1,5 +1,8 @@
 import { Cart } from "../models/carts.model.js";
 import { Product } from "../models/products.model.js";
+import { Ticket } from "../models/tickets.model.js";
+import { UserModel } from "../models/users.model.js";
+import { v4 as uuidv4 } from "uuid";
 
 export const getAllCarts = async (req, res) => {
   try {
@@ -58,7 +61,6 @@ export const createCart = async (req, res) => {
 export const addProductInCart = async (req, res) => {
   try {
     const cart = await Cart.findById(req.params.cid);
-
     if (!cart) {
       return res.status(404).json({ msg: "Carrito no encontrado" });
     }
@@ -97,6 +99,82 @@ export const addProductInCart = async (req, res) => {
       msg: "Error al agregar el producto al carrito",
       error: error.message,
     });
+  }
+};
+
+export const checkout = async (req, res) => {
+  try {
+    const cart = await Cart.findById(req.params.cid);
+    if (!cart) {
+      return res.status(404).json({ msg: "Carrito no encontrado" });
+    }
+
+    if (cart.products.length === 0) {
+      return res.status(404).json({ msg: "El carrito está vacío" });
+    }
+
+    const errors = [];
+    let total = 0;
+
+    for (let i = cart.products.length - 1; i >= 0; i--) {
+      const prod = cart.products[i];
+      const product = await Product.findById(prod.productId);
+
+      if (product.stock < prod.quantity) {
+        errors.push(`Producto de ID ${product._id}`);
+        cart.products.splice(i, 1);
+      } else {
+        product.stock -= prod.quantity;
+        total += product.price * prod.quantity;
+
+        await product.save();
+      }
+    }
+    await cart.save();
+
+    if (errors.length > 0) {
+      return res.status(400).json({ msg: "Compra no finalizada", errors });
+    }
+
+    const user = await UserModel.findById(cart.userId);
+    if (!user) {
+      return res.status(404).json({ msg: "Usuario no encontrado" });
+    }
+
+    const purchase_datetime = new Intl.DateTimeFormat("es-AR", {
+      timeZone: "America/Argentina/Buenos_Aires",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    }).format(new Date())
+
+    const ticket = new Ticket({
+      code: uuidv4(),
+      purchase_datetime,
+      amount: total,
+      purchaser: user.email,
+    });
+
+    await ticket.save();
+
+    cart.products = [];
+
+    await cart.save();
+
+    res.status(200).json({
+      msg: `Se ha finalizado la compra del carrito ${req.params.cid} y se ha generado un ticket con el código ${ticket.code}`,
+      errors,
+      cart,
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ msg: "Error al finalizar la compra", error: error.message });
   }
 };
 
@@ -207,6 +285,9 @@ export const deleteCart = async (req, res) => {
 
     if (!cart) {
       return res.status(404).json({ msg: "Carrito no encontrado" });
+    }
+    if (cart.products.length === 0) {
+      return res.status(404).json({ msg: "El carrito ya se encuentra vacío" });
     }
     cart.products = [];
     await cart.save();

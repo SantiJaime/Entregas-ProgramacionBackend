@@ -1,4 +1,5 @@
 import { generateToken } from "../middleware/jwt.config.js";
+import { config } from "../config/env.js";
 
 export const createUser = async (req, res) => {
   try {
@@ -20,31 +21,38 @@ export const createUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     if (!req.user) {
-      return res.status(401).send("Usuario o contraseña no validos");
+      return res.status(401).send("Usuario o contraseña no válidos");
     }
 
     const token = generateToken({
       email: req.user.email,
       _id: req.user._id,
       full_name: `${req.user.first_name} ${req.user.last_name}`,
+      role: req.user.role,
+      cartId: req.user.cart,
     });
 
     req.session.user = {
       email: req.user.email,
-      first_name: req.user.first_name,
+      _id: req.user._id,
       full_name: `${req.user.first_name} ${req.user.last_name}`,
+      role: req.user.role,
+      cartId: req.user.cart,
     };
 
-    res.cookie("SantiagoJaimeCookieSecret", token, {
+    res.cookie(config.COOKIE_SECRET, token, {
       httpOnly: true,
       secure: false,
       maxAge: 3600000,
     });
 
-    res.status(200).json({
-      msg: "Sesión iniciada correctamente",
-      redirect: "/api/products/realtimeproducts",
-    });
+    res
+      .status(200)
+      .json({
+        msg: "Usuario logueado correctamente",
+        redirect: "/api/products/realtimeproducts",
+        cartId: req.user.cart,
+      });
   } catch (error) {
     console.log(error);
     res
@@ -56,11 +64,11 @@ export const loginUser = async (req, res) => {
 export const logoutUser = async (req, res) => {
   try {
     req.session.destroy(() => {
-      res.clearCookie("SantiagoJaimeCookieSecret", {
+      res.clearCookie(config.COOKIE_SECRET, {
         httpOnly: true,
         secure: false,
       });
-  
+
       res.clearCookie("connect.sid", {
         path: "/",
         httpOnly: true,

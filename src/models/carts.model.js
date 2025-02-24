@@ -17,6 +17,11 @@ const cartSchema = new Schema({
     default: [],
     _id: false,
   },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  }
 });
 
 export const Cart = model("Cart", cartSchema);

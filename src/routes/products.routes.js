@@ -1,3 +1,4 @@
+import passport from "passport";
 import { Router } from "express";
 import {
   validateBody,
@@ -11,19 +12,38 @@ import {
   updateProduct,
   deleteProduct,
 } from "../controllers/products.controller.js";
+import auth from "../middleware/auth.js";
 
 const router = Router();
 
 router.get("/", getProducts);
 
-router.get("/no-render", getProductsNoRender);
+router.get(
+  "/no-render",
+  passport.authenticate("jwt"),
+  auth(["user", "admin"]),
+  getProductsNoRender
+);
 
-router.get("/realtimeproducts", getRealTimeProducts);
+router.get(
+  "/realtimeproducts",
+  passport.authenticate("jwt"),
+  auth(["user", "admin"]),
+  getRealTimeProducts
+);
 
-router.post("/", validateBody, createProduct);
+router.post("/", validateBody, auth(["admin"]), createProduct);
+router.get("/render-create-products", auth(["admin"]), (req, res) => {
+  res.render("createProduct", {});
+});
+router.put(
+  "/:pid",
+  validateParams,
+  validateBody,
+  auth(["admin"]),
+  updateProduct
+);
 
-router.put("/:pid", validateParams, validateBody, updateProduct);
-
-router.delete("/:pid", validateParams, deleteProduct);
+router.delete("/:pid", validateParams, auth(["admin"]), deleteProduct);
 
 export default router;

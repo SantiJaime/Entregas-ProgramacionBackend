@@ -106,10 +106,10 @@ export const getRealTimeProducts = async (req, res) => {
     if (restResult.docs.length === 0) {
       return res.status(404).json({ msg: "Productos no encontrados" });
     }
-
     res.render("realTimeProducts", {
       ...restResult,
       status: "success",
+      userRole: req.user.role,
       prevLink: restResult.hasPrevPage
         ? `/api/products/realtimeproducts?limit=${limit}&page=${restResult.prevPage}`
         : null,
